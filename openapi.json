@@ -1,9 +1,20 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Creator Tools",
+        "title": "Easyflows",
         "version": "v1"
     },
+    "servers": [
+        {
+            "url": "https://{subdomain}.easyflows.io",
+            "variables": {
+                "subdomain": {
+                    "default": "demo",
+                    "description": "Subdomain of the project"
+                }
+            }
+        }
+    ],
     "components": {
         "schemas": {
             "Member": {
