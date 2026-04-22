@@ -1,0 +1,904 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Creator Tools",
+        "version": "v1"
+    },
+    "components": {
+        "schemas": {
+            "Member": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "The unique identifier of the member."
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "The name of the member."
+                    }
+                },
+                "required": [
+                    "id",
+                    "name"
+                ]
+            },
+            "Review": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "The unique identifier of the review."
+                    },
+                    "rating": {
+                        "type": "number",
+                        "minimum": 1,
+                        "maximum": 5,
+                        "description": "The rating given by the reviewer."
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "The title of the review."
+                    },
+                    "body": {
+                        "type": "string",
+                        "description": "The body content of the review."
+                    },
+                    "customer": {
+                        "type": "boolean",
+                        "description": "Indicates if the reviewer is a customer."
+                    },
+                    "approved": {
+                        "type": "boolean",
+                        "description": "Indicates if the review is approved/published."
+                    },
+                    "member": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Member"
+                            },
+                            {
+                                "description": "The member who wrote the review."
+                            }
+                        ]
+                    },
+                    "product": {
+                        "type": "object",
+                        "nullable": true,
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "description": "The unique identifier of the product."
+                            },
+                            "ref": {
+                                "type": "string",
+                                "description": "The reference identifier of the product (inside platform)."
+                            },
+                            "platform": {
+                                "type": "string",
+                                "description": "The platform of the product (e.g. Tebex)."
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "The name of the product."
+                            },
+                            "image": {
+                                "type": "string",
+                                "description": "The image URL of the product."
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "The description of the product."
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "ref",
+                            "platform",
+                            "name"
+                        ],
+                        "description": "The product that the review is about."
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "description": "The date and time when the review was created."
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "description": "The date and time when the review was last updated."
+                    }
+                },
+                "required": [
+                    "id",
+                    "rating",
+                    "body",
+                    "customer",
+                    "approved",
+                    "member",
+                    "created_at",
+                    "updated_at"
+                ]
+            },
+            "ReviewsSummary": {
+                "type": "object",
+                "properties": {
+                    "average": {
+                        "type": "number",
+                        "description": "The average rating."
+                    },
+                    "total": {
+                        "type": "number",
+                        "description": "The total number of reviews."
+                    },
+                    "distribution": {
+                        "type": "object",
+                        "properties": {
+                            "1": {
+                                "type": "number",
+                                "description": "The number of 1-star reviews."
+                            },
+                            "2": {
+                                "type": "number",
+                                "description": "The number of 2-star reviews."
+                            },
+                            "3": {
+                                "type": "number",
+                                "description": "The number of 3-star reviews."
+                            },
+                            "4": {
+                                "type": "number",
+                                "description": "The number of 4-star reviews."
+                            },
+                            "5": {
+                                "type": "number",
+                                "description": "The number of 5-star reviews."
+                            }
+                        },
+                        "required": [
+                            "1",
+                            "2",
+                            "3",
+                            "4",
+                            "5"
+                        ]
+                    }
+                },
+                "required": [
+                    "average",
+                    "total",
+                    "distribution"
+                ]
+            }
+        },
+        "parameters": {}
+    },
+    "paths": {
+        "/api/v1/products": {
+            "get": {
+                "summary": "List products",
+                "tags": [
+                    "Products"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "description": "The unique identifier of the product."
+                                                    },
+                                                    "ref": {
+                                                        "type": "string",
+                                                        "description": "The reference identifier of the product (inside platform)."
+                                                    },
+                                                    "platform": {
+                                                        "type": "string",
+                                                        "description": "The platform of the product (e.g. Tebex)."
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "description": "The name of the product."
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "description": "The image URL of the product."
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "description": "The description of the product."
+                                                    }
+                                                },
+                                                "required": [
+                                                    "id",
+                                                    "ref",
+                                                    "platform",
+                                                    "name"
+                                                ]
+                                            },
+                                            "description": "The array of data returned by the API endpoint."
+                                        },
+                                        "meta": {
+                                            "type": "object",
+                                            "properties": {
+                                                "total": {
+                                                    "type": "number",
+                                                    "description": "The total number of items available."
+                                                },
+                                                "page": {
+                                                    "type": "number",
+                                                    "description": "The current page number."
+                                                },
+                                                "limit": {
+                                                    "type": "number",
+                                                    "description": "The number of items per page."
+                                                }
+                                            },
+                                            "required": [
+                                                "total",
+                                                "page",
+                                                "limit"
+                                            ],
+                                            "description": "Metadata about the paginated response."
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "description": "A description of the error that occurred."
+                                        }
+                                    },
+                                    "required": [
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/reviews": {
+            "get": {
+                "summary": "List reviews",
+                "tags": [
+                    "Reviews"
+                ],
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "number",
+                            "default": 1,
+                            "description": "The page number for pagination."
+                        },
+                        "required": false,
+                        "description": "The page number for pagination.",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "schema": {
+                            "type": "number",
+                            "default": 20,
+                            "description": "The number of items per page."
+                        },
+                        "required": false,
+                        "description": "The number of items per page.",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "schema": {
+                            "type": "string",
+                            "description": "The reference of the product for which to list reviews."
+                        },
+                        "required": false,
+                        "description": "The reference of the product for which to list reviews.",
+                        "name": "product_ref",
+                        "in": "query"
+                    },
+                    {
+                        "schema": {
+                            "type": "number",
+                            "description": "Filter reviews by rating."
+                        },
+                        "required": false,
+                        "description": "Filter reviews by rating.",
+                        "name": "rating",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "description": "The unique identifier of the review."
+                                                    },
+                                                    "rating": {
+                                                        "type": "number",
+                                                        "minimum": 1,
+                                                        "maximum": 5,
+                                                        "description": "The rating given by the reviewer."
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "description": "The title of the review."
+                                                    },
+                                                    "body": {
+                                                        "type": "string",
+                                                        "description": "The body content of the review."
+                                                    },
+                                                    "customer": {
+                                                        "type": "boolean",
+                                                        "description": "Indicates if the reviewer is a customer."
+                                                    },
+                                                    "approved": {
+                                                        "type": "boolean",
+                                                        "description": "Indicates if the review is approved/published."
+                                                    },
+                                                    "member": {
+                                                        "allOf": [
+                                                            {
+                                                                "$ref": "#/components/schemas/Member"
+                                                            },
+                                                            {
+                                                                "description": "The member who wrote the review."
+                                                            }
+                                                        ]
+                                                    },
+                                                    "product": {
+                                                        "type": "object",
+                                                        "nullable": true,
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string",
+                                                                "description": "The unique identifier of the product."
+                                                            },
+                                                            "ref": {
+                                                                "type": "string",
+                                                                "description": "The reference identifier of the product (inside platform)."
+                                                            },
+                                                            "platform": {
+                                                                "type": "string",
+                                                                "description": "The platform of the product (e.g. Tebex)."
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "description": "The name of the product."
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "description": "The image URL of the product."
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "description": "The description of the product."
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "ref",
+                                                            "platform",
+                                                            "name"
+                                                        ],
+                                                        "description": "The product that the review is about."
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "description": "The date and time when the review was created."
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "description": "The date and time when the review was last updated."
+                                                    }
+                                                },
+                                                "required": [
+                                                    "id",
+                                                    "rating",
+                                                    "body",
+                                                    "customer",
+                                                    "approved",
+                                                    "member",
+                                                    "created_at",
+                                                    "updated_at"
+                                                ]
+                                            },
+                                            "description": "The array of data returned by the API endpoint."
+                                        },
+                                        "meta": {
+                                            "type": "object",
+                                            "properties": {
+                                                "total": {
+                                                    "type": "number",
+                                                    "description": "The total number of items available."
+                                                },
+                                                "page": {
+                                                    "type": "number",
+                                                    "description": "The current page number."
+                                                },
+                                                "limit": {
+                                                    "type": "number",
+                                                    "description": "The number of items per page."
+                                                }
+                                            },
+                                            "required": [
+                                                "total",
+                                                "page",
+                                                "limit"
+                                            ],
+                                            "description": "Metadata about the paginated response."
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "description": "A description of the error that occurred."
+                                        }
+                                    },
+                                    "required": [
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a review",
+                "tags": [
+                    "Reviews"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "description": "The email of the reviewer."
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 60,
+                                        "description": "The name of the reviewer."
+                                    },
+                                    "rating": {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 5,
+                                        "description": "The rating given by the reviewer."
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "description": "The title of the review."
+                                    },
+                                    "body": {
+                                        "type": "string",
+                                        "minLength": 10,
+                                        "maxLength": 1000,
+                                        "description": "The content of the review."
+                                    },
+                                    "product_ref": {
+                                        "type": "string",
+                                        "description": "The reference of the product for which to create a review."
+                                    },
+                                    "order_ref": {
+                                        "type": "string",
+                                        "description": "The reference of the order for which to create a review."
+                                    }
+                                },
+                                "required": [
+                                    "email",
+                                    "name",
+                                    "body"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "description": "The unique identifier of the review."
+                                                },
+                                                "rating": {
+                                                    "type": "number",
+                                                    "minimum": 1,
+                                                    "maximum": 5,
+                                                    "description": "The rating given by the reviewer."
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "description": "The title of the review."
+                                                },
+                                                "body": {
+                                                    "type": "string",
+                                                    "description": "The body content of the review."
+                                                },
+                                                "customer": {
+                                                    "type": "boolean",
+                                                    "description": "Indicates if the reviewer is a customer."
+                                                },
+                                                "approved": {
+                                                    "type": "boolean",
+                                                    "description": "Indicates if the review is approved/published."
+                                                },
+                                                "member": {
+                                                    "allOf": [
+                                                        {
+                                                            "$ref": "#/components/schemas/Member"
+                                                        },
+                                                        {
+                                                            "description": "The member who wrote the review."
+                                                        }
+                                                    ]
+                                                },
+                                                "product": {
+                                                    "type": "object",
+                                                    "nullable": true,
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "string",
+                                                            "description": "The unique identifier of the product."
+                                                        },
+                                                        "ref": {
+                                                            "type": "string",
+                                                            "description": "The reference identifier of the product (inside platform)."
+                                                        },
+                                                        "platform": {
+                                                            "type": "string",
+                                                            "description": "The platform of the product (e.g. Tebex)."
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "description": "The name of the product."
+                                                        },
+                                                        "image": {
+                                                            "type": "string",
+                                                            "description": "The image URL of the product."
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "description": "The description of the product."
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "id",
+                                                        "ref",
+                                                        "platform",
+                                                        "name"
+                                                    ],
+                                                    "description": "The product that the review is about."
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "description": "The date and time when the review was created."
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "description": "The date and time when the review was last updated."
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "rating",
+                                                "body",
+                                                "customer",
+                                                "approved",
+                                                "member",
+                                                "created_at",
+                                                "updated_at"
+                                            ],
+                                            "description": "The main data returned by the API endpoint."
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "description": "A description of the error that occurred."
+                                        }
+                                    },
+                                    "required": [
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/reviews/{id}": {
+            "get": {
+                "summary": "Get a review",
+                "tags": [
+                    "Reviews"
+                ],
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string",
+                            "description": "The identifier of the review to retrieve."
+                        },
+                        "required": true,
+                        "description": "The identifier of the review to retrieve.",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "description": "The unique identifier of the review."
+                                                },
+                                                "rating": {
+                                                    "type": "number",
+                                                    "minimum": 1,
+                                                    "maximum": 5,
+                                                    "description": "The rating given by the reviewer."
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "description": "The title of the review."
+                                                },
+                                                "body": {
+                                                    "type": "string",
+                                                    "description": "The body content of the review."
+                                                },
+                                                "customer": {
+                                                    "type": "boolean",
+                                                    "description": "Indicates if the reviewer is a customer."
+                                                },
+                                                "approved": {
+                                                    "type": "boolean",
+                                                    "description": "Indicates if the review is approved/published."
+                                                },
+                                                "member": {
+                                                    "allOf": [
+                                                        {
+                                                            "$ref": "#/components/schemas/Member"
+                                                        },
+                                                        {
+                                                            "description": "The member who wrote the review."
+                                                        }
+                                                    ]
+                                                },
+                                                "product": {
+                                                    "type": "object",
+                                                    "nullable": true,
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "string",
+                                                            "description": "The unique identifier of the product."
+                                                        },
+                                                        "ref": {
+                                                            "type": "string",
+                                                            "description": "The reference identifier of the product (inside platform)."
+                                                        },
+                                                        "platform": {
+                                                            "type": "string",
+                                                            "description": "The platform of the product (e.g. Tebex)."
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "description": "The name of the product."
+                                                        },
+                                                        "image": {
+                                                            "type": "string",
+                                                            "description": "The image URL of the product."
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "description": "The description of the product."
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "id",
+                                                        "ref",
+                                                        "platform",
+                                                        "name"
+                                                    ],
+                                                    "description": "The product that the review is about."
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "description": "The date and time when the review was created."
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "description": "The date and time when the review was last updated."
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "rating",
+                                                "body",
+                                                "customer",
+                                                "approved",
+                                                "member",
+                                                "created_at",
+                                                "updated_at"
+                                            ],
+                                            "description": "The main data returned by the API endpoint."
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "description": "A description of the error that occurred."
+                                        }
+                                    },
+                                    "required": [
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/reviews/summary": {
+            "get": {
+                "summary": "Get summary",
+                "tags": [
+                    "Reviews"
+                ],
+                "parameters": [
+                    {
+                        "schema": {
+                            "type": "string",
+                            "description": "The reference of the product for which to get the review summary."
+                        },
+                        "required": false,
+                        "description": "The reference of the product for which to get the review summary.",
+                        "name": "product_ref",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/components/schemas/ReviewsSummary"
+                                                },
+                                                {
+                                                    "description": "The main data returned by the API endpoint."
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "description": "A description of the error that occurred."
+                                        }
+                                    },
+                                    "required": [
+                                        "error"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
